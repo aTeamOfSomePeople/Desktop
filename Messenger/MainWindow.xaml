@@ -21,7 +21,7 @@
             </LinearGradientBrush>
         </Grid.Background>
         <TextBox Padding="10,0" HorizontalAlignment="Center" Height="28" Margin="10,76,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" Name="login" Background="#4C000000" BorderBrush="#4CFFFFFF" SelectionBrush="White" Foreground="White" FontSize="16"/>
-        <TextBox Padding="10,0" HorizontalAlignment="Center" Height="28" Margin="10,178,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" Name="password" Background="#4C000000" BorderBrush="#4CFFFFFF" SelectionBrush="White" FontSize="16" Foreground="White"/>
+        <PasswordBox Padding="10,0" HorizontalAlignment="Center" Height="28" Margin="10,178,10,0" VerticalAlignment="Top" Width="360" Name="password" Background="#4C000000" BorderBrush="#4CFFFFFF" SelectionBrush="White" FontSize="16" Foreground="White"/>
         <Button Content="Вход" HorizontalAlignment="Center" Height="24" Margin="122,229,136,0" VerticalAlignment="Top" Width="136" Click="Button_Click_1" Name="enter" RenderTransformOrigin="0.5,0.5"/>
         <Button Content="Регистрация" HorizontalAlignment="Center" Height="24" Margin="144,267,156,0" VerticalAlignment="Top" Width="94" Click="Button_Click"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Center" Height="18" Margin="0,211,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="188" Foreground="White" TextAlignment="Center"/>
@@ -29,9 +29,9 @@
         <TextBlock HorizontalAlignment="Center" Margin="136,151,137,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="121" Foreground="White" FontSize="14" TextDecorations="{x:Null}" Height="22" TextAlignment="Center" Text="Введите пароль"/>
         <Image x:Name="image" HorizontalAlignment="Left" Height="33" Margin="136,314,0,0" VerticalAlignment="Top" Width="33" RenderTransformOrigin="-2.508,0.479" Source="images/Vk.png" MouseDown="image_MouseDown">
         </Image>
-        <Image x:Name="image1" HorizontalAlignment="Left" Height="33" Margin="174,314,0,0" VerticalAlignment="Top" Width="33" Source="images/Instagram.png" MouseDown="image1_MouseDown">
+        <Image x:Name="image1" HorizontalAlignment="Left" Height="33" Margin="174,314,0,0" VerticalAlignment="Top" Width="33" Source="images/google.png" MouseDown="image1_MouseDown">
         </Image>
-        <Image x:Name="image2" HorizontalAlignment="Left" Height="33" Margin="212,314,0,0" VerticalAlignment="Top" Width="33" Source="images/google.png" MouseDown="image2_MouseDown">
+        <Image x:Name="image2" HorizontalAlignment="Left" Height="33" Margin="212,314,0,0" VerticalAlignment="Top" Width="33" Source="images/Instagram.png" MouseDown="image2_MouseDown">
         </Image>
 
     </Grid>

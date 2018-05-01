@@ -5,49 +5,71 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Messenger"
         mc:Ignorable="d"
-        Title="Main" Height="680" Width="1140" MinWidth="1140" MaxWidth="1140" MinHeight="680" MaxHeight="680">
+        Title="Main" Height="654" Width="1088" MinWidth="1140" MaxWidth="1140" MinHeight="680" MaxHeight="980">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="254*"/>
+            <ColumnDefinition Width="619*"/>
+            <ColumnDefinition Width="259*"/>
+        </Grid.ColumnDefinitions>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="Black" Offset="0"/>
                 <GradientStop Color="#FF934C4C" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <Grid x:Name="MainGrid" HorizontalAlignment="Left" Height="659" VerticalAlignment="Top" Width="1113" IsHitTestVisible="True" Margin="10,0,0,0"  >
+        <Grid x:Name="MainGrid" HorizontalAlignment="Left" Height="649" VerticalAlignment="Top" Width="1113" IsHitTestVisible="True" Margin="10,0,0,0" Grid.ColumnSpan="3"  >
             <Grid.RowDefinitions>
                 <RowDefinition Height="540*"/>
                 <RowDefinition Height="119*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="383*"/>
-                <ColumnDefinition Width="62*"/>
+                <ColumnDefinition Width="863*"/>
+                <ColumnDefinition Width="250*"/>
             </Grid.ColumnDefinitions>
-            <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="375" Margin="22,79,0,0" VerticalAlignment="Top" Width="222" Loaded="listBox_Loaded" MouseUp="listBox_MouseDoubleClick" Background="#7F342626" Foreground="White"/>
-            <ListBox x:Name="listBox1" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="600" Background="#7F342626" Foreground="White" BorderThickness="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
-            <Button x:Name="button" Content="Отправить сообщение" HorizontalAlignment="Left" Margin="22,10.994,0,0" VerticalAlignment="Top" Width="222" Height="74" Click="button_Click" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Grid.Row="1"/>
-            <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="74" Margin="244,10.994,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="598" SpellCheck.IsEnabled="True" Background="#338D8699" Foreground="White" Grid.Row="1" />
-            <Grid HorizontalAlignment="Left" Height="50" Margin="22,10,0,0" VerticalAlignment="Top" Width="1083" d:IsHidden="False" Grid.ColumnSpan="2">
+            <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="476" Margin="22,149,0,0" VerticalAlignment="Top" Width="222" Loaded="listBox_Loaded" MouseUp="listBox_MouseDoubleClick" Background="#7F342626" Foreground="White" Grid.RowSpan="2"/>
+            <Button x:Name="button" Content="Отправить сообщение" HorizontalAlignment="Left" Margin="1,534,0,0" VerticalAlignment="Top" Width="222" Height="91" Click="button_Click" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Grid.RowSpan="2" Grid.Column="1"/>
+            <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="91" Margin="338,534,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="526" SpellCheck.IsEnabled="True" Background="#338D8699" Foreground="White" Grid.RowSpan="2" Grid.ColumnSpan="2" PreviewKeyDown="textBox2_PreviewKeyDown" />
+            <Grid HorizontalAlignment="Left" Height="46" Margin="22,10,0,0" VerticalAlignment="Top" Width="1083" d:IsHidden="False" Grid.ColumnSpan="2">
                 <TextBlock x:Name="textBlock" HorizontalAlignment="Center" Margin="0,0,0,-10" TextWrapping="Wrap" VerticalAlignment="Top" Height="21"  Foreground="White" FontSize="18"><Run/><LineBreak/><Run/></TextBlock>
-                <Button x:Name="button3" Content="Инфо" HorizontalAlignment="Left" Height="33" Margin="823,10,0,0" VerticalAlignment="Top" Width="142" Background="#FF785B5B" Foreground="White" Click="button3_Click"/>
+                <Button x:Name="button3" Content="Инфо" HorizontalAlignment="Left" Height="33" Margin="921,10,0,0" VerticalAlignment="Top" Width="142" Background="#FF785B5B" Foreground="White" Click="button3_Click"/>
                 <Image x:Name="image1" HorizontalAlignment="Left" Height="40" Margin="22,3,0,0" VerticalAlignment="Top" Width="43" Source="images/user.png"/>
             </Grid>
-            <Button x:Name="button2" Content="Поиск пользователей" HorizontalAlignment="Left" Height="75" Margin="22,459,0,0" VerticalAlignment="Top" Width="217" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Click="button2_Click"/>
-            <ListBox x:Name="listBox4" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="455" Margin="844,79,0,0" VerticalAlignment="Top" Width="242" Background="#7F342626"/>
+            <Button x:Name="button2" Content="Поиск" HorizontalAlignment="Left" Height="71" Margin="22,79,0,0" VerticalAlignment="Top" Width="222" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Click="button2_Click"/>
+            <ListBox x:Name="listBox4" HorizontalAlignment="Left" Height="455" Margin="1,79,0,0" VerticalAlignment="Top" Width="222" Background="#7F342626" Grid.Column="1"/>
+            <Button x:Name="FilesButton" Content="" HorizontalAlignment="Left" Margin="244,534,0,0" VerticalAlignment="Top" Width="94" Height="91" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Grid.RowSpan="2" Click="FilesButton_Click"/>
+
+            <ListView x:Name="ListViewMes" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="620" Foreground="White" Background="#FF3E2626" ScrollViewer.HorizontalScrollBarVisibility="Disabled" RenderTransformOrigin="0.5,0.5" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.ColumnSpan="2">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding .}" TextWrapping="Wrap" TextAlignment="Justify"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem  Header="Редактировать сообщение" Click="MenuItem_Click"/>
+                        <MenuItem Header="Удалить сообщение у себя" Click="MenuItem_Click_1"/>
+                        <MenuItem Header="Удалить сообщение для всех" Click="MenuItem_Click_2"/>
+                        <MenuItem Header="Удалить сообщение у собеседника?????"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
 
         </Grid>
 
-        <Grid Name="searchUsers" HorizontalAlignment="Center" Height="459" VerticalAlignment="Center" Width="579" Margin="211,90,100,76" Background="#FF3C2626" Visibility="Hidden">
-            <ListBox x:Name="listBox2" HorizontalAlignment="Left" Height="159" Margin="52,200,0,0" VerticalAlignment="Top" Width="205" MouseDoubleClick="listBox2_MouseDoubleClick" Background="#338D8699" Foreground="White"/>
-            <ListBox x:Name="listBox3" HorizontalAlignment="Left" Height="207" Margin="292,152,0,0" VerticalAlignment="Top" Width="228" Background="#338D8699" Foreground="White"/>
-            <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="49" Margin="292,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="228" Background="#338D8699" Foreground="White"/>
-            <TextBox x:Name="textBox3" HorizontalAlignment="Left" Height="49" Margin="52,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" Background="#338D8699" Foreground="White"/>
-            <Button x:Name="button1" Content="Найти пользователей" HorizontalAlignment="Left" Margin="52,152,0,0" VerticalAlignment="Top" Width="205" Click="button1_Click" Background="#FF785B5B" Foreground="White" Height="43"/>
-            <Button x:Name="createChat" HorizontalAlignment="Left" Margin="174,384,0,0" VerticalAlignment="Top" Width="222" Height="65" Click="createChat_Click" Content="Создать чат" Background="#FF785B5B" BorderThickness="5" RenderTransformOrigin="0.5,0.5" Foreground="White" FontSize="18" FontFamily="MS Reference Sans Serif"/>
-            <Label x:Name="label" Content="Укажите название чата" HorizontalAlignment="Left" Height="23" Margin="329,70,0,0" VerticalAlignment="Top" Width="171" Foreground="White"/>
-            <Image x:Name="image" HorizontalAlignment="Left" Height="40" Margin="529,10,0,0" VerticalAlignment="Top" Width="40" Source="images/1.png" MouseDown="image_MouseDown"/>
+        <Grid Name="searchUsers" HorizontalAlignment="Center" Height="458" VerticalAlignment="Center" Width="806" Margin="0" Background="#FF3C2626" Visibility="Hidden" Grid.ColumnSpan="3">
+            <ListBox x:Name="listBox2" HorizontalAlignment="Left" Height="320" Margin="26,129,0,0" VerticalAlignment="Top" Width="203" MouseDoubleClick="listBox2_MouseDoubleClick" Background="#338D8699" Foreground="White"/>
+            <TextBox x:Name="textBox3" HorizontalAlignment="Left" Height="49" Margin="26,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="203" Background="#338D8699" Foreground="White"/>
+            <Button x:Name="button1" Content="Найти пользователей" HorizontalAlignment="Left" Margin="26,81,0,0" VerticalAlignment="Top" Width="203" Click="button1_Click" Background="#FF785B5B" Foreground="White" Height="43"/>
+            <Image x:Name="image" HorizontalAlignment="Left" Height="40" Margin="761,10,0,0" VerticalAlignment="Top" Width="40" Source="images/1.png" MouseDown="image_MouseDown"/>
+            <ListBox x:Name="listBoxPublic" HorizontalAlignment="Left" Height="320" Margin="307,129,0,0" VerticalAlignment="Top" Width="205" Background="#338D8699" Foreground="White" MouseDoubleClick="listBoxPublic_MouseDoubleClick"/>
+            <TextBox x:Name="textBoxPublic" HorizontalAlignment="Left" Height="49" Margin="307,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" Background="#338D8699" Foreground="White"/>
+            <Button x:Name="FindPublic" Content="Найти канал" HorizontalAlignment="Left" Margin="307,81,0,0" VerticalAlignment="Top" Width="205" Background="#FF785B5B" Foreground="White" Height="43" Click="FindPublic_Click"/>
+            <Button x:Name="CreatePublic" Content="Создать канал" HorizontalAlignment="Left" Margin="558,129,0,0" VerticalAlignment="Top" Width="204" Background="#FF785B5B" Foreground="White" Height="43" Click="CreatePublic_Click"/>
+            <Button x:Name="CreateGroup" Content="Создать групповой чат" HorizontalAlignment="Left" Margin="558,280,0,0" VerticalAlignment="Top" Width="204" Background="#FF785B5B" Foreground="White" Height="44" Click="CreateGroup_Click"/>
         </Grid>
 
-        <Grid Name="UserInformations" HorizontalAlignment="Center" Height="406" VerticalAlignment="Center" Width="579" Margin="211,105,100,113" Visibility="Hidden" Background="#FF3C2626">
+        <Grid Name="UserInformations" HorizontalAlignment="Center" Height="406" VerticalAlignment="Center" Width="578" Margin="31,95,10,148" Visibility="Hidden" Background="#FF3C2626" Grid.Column="1">
             <TextBlock HorizontalAlignment="Left" Height="172" Margin="42,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="240" Background="#338D8699" Foreground="White"><Run Text="{}{"/><Run Text="Информация о пользователе"/><Run Text="}"/></TextBlock>
             <Image HorizontalAlignment="Left" Height="40" Margin="529,10,0,0" VerticalAlignment="Top" Width="40" RenderTransformOrigin="-0.014,0.2" Source="images/1.png" MouseDown="Image_MouseDown_1">
                 <Image.OpacityMask>
@@ -62,7 +84,7 @@
 
         </Grid>
 
-        <Grid x:Name="Settings" Width="400" Height="500" Visibility="Hidden">
+        <Grid x:Name="Settings" Visibility="Hidden" Grid.Column="1" Margin="135,74,97,75">
             <Grid.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black" Offset="0"/>
@@ -76,14 +98,14 @@
                     <ImageBrush ImageSource="images/1.png"/>
                 </Image.OpacityMask>
             </Image>
-            <TextBox x:Name="bioSetting" HorizontalAlignment="Center" Height="123" Margin="0,284,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="259" Background="#7F342626" Foreground="White"/>
+            <TextBox x:Name="bioSetting" HorizontalAlignment="Center" Height="123" Margin="0,284,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="259" Background="#7F342626" Foreground="White" LostFocus="bioSetting_LostFocus"/>
             <TextBlock x:Name="nameSetting" HorizontalAlignment="Center" Height="22" Margin="0,231,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="344" TextAlignment="Center" Foreground="White"/>
             <TextBlock x:Name="loginSetting" HorizontalAlignment="Center" Height="22" Margin="0,253,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="344" TextAlignment="Center" Foreground="White"/>
 
         </Grid>
 
 
-        <ScrollViewer x:Name="AllSettings" HorizontalAlignment="Center" Height="456" Margin="0,0,0,10" VerticalAlignment="Center" Width="410" VerticalScrollBarVisibility="Hidden" Visibility="Hidden">
+        <ScrollViewer x:Name="AllSettings" HorizontalAlignment="Center" Height="456" Margin="0" VerticalAlignment="Center" Width="410" VerticalScrollBarVisibility="Hidden" Visibility="Hidden" Grid.Column="1">
             <Grid  Width="400" Height="456">
                 <Grid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -102,8 +124,8 @@
                 <Label Content="Введите новое имя" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Foreground="White"/>
                 <Image HorizontalAlignment="Left" Height="53" Margin="337,10,0,0" VerticalAlignment="Top" Width="53" Source="images/1.png" MouseDown="Image_MouseDown_2"/>
                 <Button x:Name="SaveChange"  Content="Сохранить" HorizontalAlignment="Center" Height="75" Margin="92,0,92,10" VerticalAlignment="Bottom" Width="216" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Click="SaveChange_Click"/>
-                <Label Content="Введите новый пароль" HorizontalAlignment="Left" Margin="10,168,0,0" VerticalAlignment="Top" Foreground="White"/>
-                <TextBox x:Name="PasswordChange" HorizontalAlignment="Left" Height="35" Margin="10,199,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="380" Foreground="White">
+                <Label Content="Введите старый пароль" HorizontalAlignment="Left" Margin="10,168,0,0" VerticalAlignment="Top" Foreground="White"/>
+                <TextBox x:Name="OldPassword" HorizontalAlignment="Left" Height="35" Margin="10,199,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="380" Foreground="White">
                     <TextBox.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                             <GradientStop Color="Black" Offset="0"/>
@@ -111,9 +133,26 @@
                         </LinearGradientBrush>
                     </TextBox.Background>
                 </TextBox>
+                <TextBox x:Name="NewPassword" HorizontalAlignment="Left" Height="35" Margin="10,295,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="380" Foreground="White">
+                    <TextBox.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Black" Offset="0"/>
+                            <GradientStop Color="#7F342626" Offset="1"/>
+                        </LinearGradientBrush>
+                    </TextBox.Background>
+                </TextBox>
+                <Label Content="Введите новый пароль" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Foreground="White"/>
 
             </Grid>
         </ScrollViewer>
+        <RichTextBox x:Name="RichBox" Grid.Column="2" HorizontalAlignment="Left" Height="100" Margin="0,630,0,0" VerticalAlignment="Top" Width="155" Background="#FF704343" Foreground="White">
+
+        </RichTextBox>
+        <ListBox x:Name="listBox1" HorizontalAlignment="Left" Height="226" Margin="351,678,0,-255" VerticalAlignment="Top" Width="308" Background="#7F342626" Foreground="White" BorderThickness="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <ListBox x:Name="PictureIds" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="96" Margin="24,654,0,-101" VerticalAlignment="Top" Width="280"/>
+        <ListBox x:Name="listOfMessageId" Grid.Column="1" HorizontalAlignment="Left" Height="95" Margin="55,655,0,-101" VerticalAlignment="Top" Width="274"/>
+
+
 
     </Grid>
 </Window>

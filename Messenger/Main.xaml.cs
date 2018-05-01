@@ -22,31 +22,38 @@ namespace Messenger
     /// </summary>
     public partial class Main : Window
     {
-        private ZeroAPI.User user { get; set; }
-        private ZeroAPI.Chat currentChat { get; set; }
-        private List<ZeroAPI.Chat> chats = new List<ZeroAPI.Chat>();
-        private List<ZeroAPI.User> users = new List<ZeroAPI.User>();
+        private API.Users.User user { get; set; }
+        private API.Accounts.Account account { get; set; }
+        private API.Chats.Chat currentChat { get; set; }
+        //private List<ZeroAPI.Chat> chats = new List<ZeroAPI.Chat>();
+        private List<API.Chats.Chat> chats = new List<API.Chats.Chat>();
+        private List<API.Users.User> users = new List<API.Users.User>();
+        //private List<ZeroAPI.User> users = new List<ZeroAPI.User>();
         public int lol = 1;
+        private bool editing = false;
 
-        public Main(ZeroAPI.User user)
+        public Main(API.Accounts.Account account, API.Users.User user)
         {
             InitializeComponent();
-            this.user = user;
             currentChat = null;
-            textBlock.Text = user.Name;
-            ZeroAPI.Connection.Connect(user, e => Dispatcher.Invoke(() =>
-            {
-                if (currentChat != null && currentChat.Id == e.ChatId)
-                {
-                    listBox1.Items.Add(ZeroAPI.User.GetInfo(e.UserId).Name + " > " + e.Text + " | " + e.Date.ToShortTimeString());
-                }
-            }), e => Dispatcher.Invoke(() => { chats.Add(e); listBox.Items.Add(e.Name); }));
-
+            this.user = user;
+            this.account = account;
+            textBlock.Text = user.name;
+            //API.Connection.Connect(user, e => Dispatcher.Invoke(() =>
+            //{
+            //    if (currentChat != null && currentChat.id == e.chatId)
+            //    {
+            //        //var usersss = API.Users.GetUserInfo(e.userId).Wait();
+            //        //Task.Run(async () => {var userss = await API.Users.GetUserInfo(e.userId); });
+            //        //var userss = API.Users.GetUserInfo(e.userId).GetAwaiter().ToString();
+            //        listBox1.Items.Add(user.name + " > " + e.text + " | " + e.date.ToShortTimeString());
+            //    }
+            //}), e => Dispatcher.Invoke(() => { chats.Add(e); listBox.Items.Add(e.name); }), account);
             var img = new BitmapImage();
             img.BeginInit();
             try
             {
-                img.StreamSource = new System.IO.MemoryStream(ZeroAPI.Utils.GetFileAsBytes(user.Avatar));
+                img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
                 img.EndInit();
                 image1.Source = img;
             }
@@ -55,84 +62,117 @@ namespace Messenger
         
         private void createChat_Click(object sender, RoutedEventArgs e)
         {
-            var users = new HashSet<ZeroAPI.User>();
-            foreach (var us in listBox3.Items)
-            {
-                users.Add(ZeroAPI.User.GetInfo(int.Parse(us.ToString())));
-            }
-            user.CreateChat(textBox.Text, ZeroAPI.ChatType.Public, users);
-            searchUsers.Visibility = Visibility.Hidden;
-            BlurEffect blurEffect = new BlurEffect();
-            blurEffect.Radius = 0;
-            MainGrid.Effect = blurEffect;
-            MainGrid.IsHitTestVisible = true;
+            //var users = new HashSet<ZeroAPI.User>();
+            //foreach (var us in listBox3.Items)
+            //{
+            //    users.Add(ZeroAPI.User.GetInfo(int.Parse(us.ToString())));
+            //}
+            //user.CreateChat(textBox.Text, ZeroAPI.ChatType.Public, users);
+            //searchUsers.Visibility = Visibility.Hidden;
+            //BlurEffect blurEffect = new BlurEffect();
+            //blurEffect.Radius = 0;
+            //MainGrid.Effect = blurEffect;
+            //MainGrid.IsHitTestVisible = true;
         }
 
-        private void listBox_Loaded(object sender, RoutedEventArgs e)
+        //loading chats
+        private async void listBox_Loaded(object sender, RoutedEventArgs e)
         {
-            chats.Clear();
-            foreach (var chat in user.GetChats())
+            long[] userChats = await API.Users.GetChats(account.accessToken);
+            foreach (var i in userChats)
             {
-                chats.Add(chat);
-                listBox.Items.Add(chat.Name);
+                chats.Add(await API.Chats.GetChatInfo(account.accessToken, i));
+                var chating = await API.Chats.GetChatInfo(account.accessToken, i);
+                listBox.Items.Add(chating.id);
             }
         }
 
-        private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        //Chose current chat
+        private async void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (listBox.SelectedItem != null)
             {
                 listBox1.Items.Clear();
-                foreach (var message in (user.GetMessages(chats[listBox.SelectedIndex])))
+                ListViewMes.Items.Clear();
+                listOfMessageId.Items.Clear();
+                foreach (var message in (await API.Messages.GetMessages(account.accessToken, chats[listBox.SelectedIndex].id, 50, 1)).Reverse())
                 {
-                    listBox1.Items.Add(ZeroAPI.User.GetInfo(message.UserId).Name + " > " + message.Text + " | " + message.Date.ToShortTimeString());
+                    var userInChat = await API.Users.GetUserInfo(message.userId);
+                    listBox1.Items.Add(userInChat.name + " > " + message.text + " | " + message.date.ToShortTimeString());
+                    ListViewMes.Items.Add(userInChat.name + Environment.NewLine + message.text + Environment.NewLine  + message.date.ToShortTimeString());
+                    listOfMessageId.Items.Add(message.id);
                 }
                 currentChat = chats[listBox.SelectedIndex];
             }
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        //Send message via button
+        private async void button_Click(object sender, RoutedEventArgs e)
         {
-            user.SendMessage(textBox2.Text, currentChat);
-            textBox2.Clear();
+            try
+            {
+                string fileIds = "";
+                foreach(var i in PictureIds.Items)
+                {
+                    fileIds += i +",";
+                }
+                if(fileIds != "")
+                {
+                    fileIds = fileIds.Remove(fileIds.Length - 1);
+                }
+                await API.Messages.SendMessage(account.accessToken, currentChat.id, textBox2.Text,fileIds);
+                textBox2.Clear();
+                PictureIds.Items.Clear();
+            }
+            catch { }
+            
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        //Search user
+        private async void button1_Click(object sender, RoutedEventArgs e)
         {
             listBox2.Items.Clear();
             users.Clear();
-            foreach (var user in ZeroAPI.User.FindUsers(textBox3.Text))
+            if(textBox3.Text != "")
             {
-                users.Add(user);
-                listBox2.Items.Add(user.Name);
+                foreach (var user in await API.Users.FindUsersByName(textBox3.Text, 10))
+                {
+                    users.Add(await API.Users.GetUserInfo(user));
+                    var userSearched = await API.Users.GetUserInfo(user);
+                    listBox2.Items.Add(userSearched.name);
+                }
             }
+            
 
         }
 
+        //Open user information in search
         private void listBox2_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (listBox2.SelectedItem != null)
             {
                 UserInformations.Visibility = Visibility.Visible;
                 searchUsers.Visibility = Visibility.Hidden;
-                NameOfSearchUser.Text = users[listBox2.SelectedIndex].Name;
+                NameOfSearchUser.Text = users[listBox2.SelectedIndex].name;
 
                 var img = new BitmapImage();
                 img.BeginInit();
                 try
                 {
-                    img.StreamSource = new System.IO.MemoryStream(ZeroAPI.Utils.GetFileAsBytes(users[listBox2.SelectedIndex].Avatar));
+                    img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
                     img.EndInit();
-                    SearchUserAvatar.Source = img;
+                    image1.Source = img;
                 }
                 catch { }
-                
+
 
 
                 //    listBox3.Items.Add(users[listBox2.SelectedIndex].Id);
             }
         }
 
+
+        //Open search
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             searchUsers.Visibility = Visibility.Visible;
@@ -143,16 +183,17 @@ namespace Messenger
         }
 
 
-        ~Main()
-        {
-            ZeroAPI.Connection.Disconnect();
-        }
+        //~Main()
+        //{
+        //    API.Connection.Disconnect();
+        //}
 
+            //Close search
         private void image_MouseDown(object sender, MouseButtonEventArgs e)
         {
             listBox2.Items.Clear();
-            listBox3.Items.Clear();
-            textBox.Clear();
+            listBoxPublic.Items.Clear();
+            textBoxPublic.Clear();
             textBox3.Clear();
             searchUsers.Visibility = Visibility.Hidden;
             BlurEffect blurEffect = new BlurEffect();
@@ -171,6 +212,7 @@ namespace Messenger
 
         }
 
+        //Open bio
         private void button3_Click(object sender, RoutedEventArgs e)
         {
             Settings.Visibility = Visibility.Visible;
@@ -178,31 +220,30 @@ namespace Messenger
             blurEffect.Radius = 20;
             MainGrid.Effect = blurEffect;
             MainGrid.IsHitTestVisible = false;
-            nameSetting.Text = user.Name;
-            loginSetting.Text = "Денис запретил";
+            nameSetting.Text = user.name;
             var img = new BitmapImage();
             img.BeginInit();
             try
             {
-                img.StreamSource = new System.IO.MemoryStream(ZeroAPI.Utils.GetFileAsBytes(user.Avatar));
+                img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
                 img.EndInit();
                 avatarSetting.Source = img;
             }
             catch { }
-            bioSetting.Text = "Появится в новой версии";
+            bioSetting.Text = user.description;
         }
 
+        //Close user information in search
         private void Image_MouseDown_1(object sender, MouseButtonEventArgs e)
         {
             UserInformations.Visibility = Visibility.Hidden;
             searchUsers.Visibility = Visibility.Visible;
         }
 
+        //Create Dialog
         private void CreateChatOne_Click(object sender, RoutedEventArgs e)
         {
-            var usersChat = new HashSet<ZeroAPI.User>();
-            usersChat.Add(ZeroAPI.User.GetInfo(int.Parse(users[listBox2.SelectedIndex].Id.ToString())));
-            user.CreateChat(users[listBox2.SelectedIndex].Name, ZeroAPI.ChatType.Public, usersChat);
+            API.Chats.CreateDialog(account.accessToken, users[listBox2.SelectedIndex].id);
             searchUsers.Visibility = Visibility.Hidden;
             UserInformations.Visibility = Visibility.Hidden;
             BlurEffect blurEffect = new BlurEffect();
@@ -211,6 +252,7 @@ namespace Messenger
             MainGrid.IsHitTestVisible = true;
         }
 
+        //Close bio
         private void image1_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Settings.Visibility = Visibility.Hidden;
@@ -220,13 +262,15 @@ namespace Messenger
             MainGrid.IsHitTestVisible = true;
         }
 
+        //Open settings
         private void buttonSetting_Click(object sender, RoutedEventArgs e)
         {
             Settings.Visibility = Visibility.Hidden;
             AllSettings.Visibility = Visibility.Visible;
         }
 
-        private void avatarSetting_MouseDown(object sender, MouseButtonEventArgs e)
+        //Change new avatar
+        private async void avatarSetting_MouseDown(object sender, MouseButtonEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
 
@@ -240,42 +284,182 @@ namespace Messenger
             {
                 filename = dlg.FileName;
             }
-            user.ChangeAvatar(filename);
-            user = ZeroAPI.User.GetInfo(user.Id);
+            var fileId = await API.Files.UploadFile(filename);
+            long fileIds = Convert.ToInt32(fileId);
+            await API.Users.ChangeAvatar(account.accessToken, fileIds);
+            user = await API.Users.GetUserInfo(user.id);
 
             var img = new BitmapImage();
             img.BeginInit();
             try
             {
-                img.StreamSource = new System.IO.MemoryStream(ZeroAPI.Utils.GetFileAsBytes(user.Avatar));
+                img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
                 img.EndInit();
                 image1.Source = img;
-                
+
             }
             catch { }
         }
 
+        //Close settings
         private void Image_MouseDown_2(object sender, MouseButtonEventArgs e)
         {
+            NameChange.Text = "";
+            OldPassword.Text = "";
+            NewPassword.Text = "";
             Settings.Visibility = Visibility.Visible;
             AllSettings.Visibility = Visibility.Hidden;
         }
 
-        private void SaveChange_Click(object sender, RoutedEventArgs e)
+        //Save new password or new name
+        private async void SaveChange_Click(object sender, RoutedEventArgs e)
         {
-            if(NameChange.Text != "")
+            if (NameChange.Text != "")
             {
-                user.ChangeName(NameChange.Text);
-                user = ZeroAPI.User.GetInfo(user.Id);
-                textBlock.Text = user.Name;
-                nameSetting.Text = user.Name;
+                await API.Users.ChangeName(account.accessToken, NameChange.Text);
+                user = await API.Users.GetUserInfo(account.userId);
+                textBlock.Text = user.name;
+                nameSetting.Text = user.name;
             }
-            if(PasswordChange.Text != "")
+            if (OldPassword.Text != "" && NewPassword.Text !="")
             {
-                user.ChangePassword(PasswordChange.Text);
+                await API.Accounts.ChangePassword(account.accessToken, OldPassword.Text, NewPassword.Text);
             }
+            NameChange.Text = "";
+            OldPassword.Text = "";
+            NewPassword.Text = "";
             Settings.Visibility = Visibility.Visible;
             AllSettings.Visibility = Visibility.Hidden;
+        }
+
+        //Change description
+        private async void bioSetting_LostFocus(object sender, RoutedEventArgs e)
+        {
+            await API.Users.ChangeDescription(account.accessToken, bioSetting.Text);
+            user = await API.Users.GetUserInfo(account.userId);
+        }
+
+        private void ListViewMes_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+        {
+
+        }
+
+        //Send messages via enter key
+        private async void textBox2_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
+            // Check if we have pressed enter
+            if (e.Key == Key.Enter)
+            {
+                Console.WriteLine("asdsad");
+                // If we have control pressed...
+                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                {
+                    // Add a new line at the point where the cursor is
+                    var index = textBox2.CaretIndex;
+
+                    // Insert the new line
+                    textBox2.Text = textBox2.Text.Insert(index, Environment.NewLine);
+
+                    // Shift the caret forward to the newline
+                    textBox2.CaretIndex = index + Environment.NewLine.Length;
+
+                    // Mark this key as handled by us
+                    e.Handled = true;
+                }
+                else
+                {
+                    try
+                    {
+                        string fileIds = "";
+                        foreach (var i in PictureIds.Items)
+                        {
+                            fileIds += i + ",";
+                        }
+                        if (fileIds != "")
+                        {
+                            fileIds = fileIds.Remove(fileIds.Length - 1);
+                        }
+                        await API.Messages.SendMessage(account.accessToken, currentChat.id, textBox2.Text, fileIds);
+                        textBox2.Clear();
+                        PictureIds.Items.Clear();
+                    }
+                    catch { }
+
+
+                }
+
+                // Mark the key as handled
+                e.Handled = true;
+            }
+        }
+
+        //Search public
+        private async void FindPublic_Click(object sender, RoutedEventArgs e)
+        {
+            
+            listBoxPublic.Items.Clear();
+            if (textBoxPublic.Text != "")
+            {
+                foreach (var pub in await API.Chats.FindPublicByName(textBoxPublic.Text, 50))
+                {
+                    var publicSearched = await API.Chats.GetChatInfo(account.accessToken,pub);
+                    listBoxPublic.Items.Add(publicSearched.name);
+                }
+            }
+        }
+
+        private void listBoxPublic_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        //Uploading file for messages
+        private async void FilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+
+            dlg.Filter = "jpg|*.jpg| bmp|*.bmp";
+
+            Nullable<bool> result = dlg.ShowDialog();
+
+            string filename = "";
+
+            if (result == true)
+            {
+                filename = dlg.FileName;
+            }
+            var fileId = await API.Files.UploadFile(filename);
+            long fileIds = Convert.ToInt32(fileId);
+            PictureIds.Items.Add(fileIds);
+        }
+
+        private void CreatePublic_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CreateGroup_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        //Edit messages
+        private async void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        //Removing messages from you
+        private async void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            await API.Messages.DeleteMessage(account.accessToken, Convert.ToUInt32(listOfMessageId.Items[ListViewMes.SelectedIndex]),false);
+        }
+
+        //Removing messages from all
+        private async void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            await API.Messages.DeleteMessage(account.accessToken, Convert.ToUInt32(listOfMessageId.Items[ListViewMes.SelectedIndex]), true);
         }
     }
 }
