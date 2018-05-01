@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="API">
-      <HintPath>..\..\API\API\bin\Debug\API.dll</HintPath>
+      <HintPath>..\..\..\ZeroAPI\API\bin\Debug\API.dll</HintPath>
     </Reference>
     <Reference Include="Centvrio.Emoji, Version=1.1.1.100, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Centvrio.Emoji.1.1.1\lib\netstandard2.0\Centvrio.Emoji.dll</HintPath>
@@ -63,10 +63,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="ZeroAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ZeroAPI-T\ZeroAPI\bin\Debug\ZeroAPI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

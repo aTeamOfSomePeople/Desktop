@@ -39,16 +39,20 @@ namespace Messenger
             this.user = user;
             this.account = account;
             textBlock.Text = user.name;
-            //API.Connection.Connect(user, e => Dispatcher.Invoke(() =>
-            //{
-            //    if (currentChat != null && currentChat.id == e.chatId)
-            //    {
-            //        //var usersss = API.Users.GetUserInfo(e.userId).Wait();
-            //        //Task.Run(async () => {var userss = await API.Users.GetUserInfo(e.userId); });
-            //        //var userss = API.Users.GetUserInfo(e.userId).GetAwaiter().ToString();
-            //        listBox1.Items.Add(user.name + " > " + e.text + " | " + e.date.ToShortTimeString());
-            //    }
-            //}), e => Dispatcher.Invoke(() => { chats.Add(e); listBox.Items.Add(e.name); }), account);
+            API.Connection.Connect(account.accessToken, e => Dispatcher.Invoke(() =>
+            {
+                if (currentChat != null && currentChat.id == e.chatId)
+                {
+                    //var usersss = API.Users.GetUserInfo(e.userId).Wait();
+                    //Task.Run(async () => {var userss = await API.Users.GetUserInfo(e.userId); });
+                    //var userss = API.Users.GetUserInfo(e.userId).GetAwaiter().ToString();
+                    ListViewMes.Items.Add(API.Users.GetUserInfo(e.userId).Result.name + " > " + e.text + " | " + e.date.ToShortTimeString());
+                }
+            }), e => Dispatcher.Invoke(() => 
+            {
+                chats.Add(e);
+                listBox.Items.Add(e.id);
+            }));
             var img = new BitmapImage();
             img.BeginInit();
             try
@@ -95,12 +99,16 @@ namespace Messenger
                 listBox1.Items.Clear();
                 ListViewMes.Items.Clear();
                 listOfMessageId.Items.Clear();
-                foreach (var message in (await API.Messages.GetMessages(account.accessToken, chats[listBox.SelectedIndex].id, 50, 1)).Reverse())
+                var messages = await API.Messages.GetMessages(account.accessToken, chats[listBox.SelectedIndex].id, 50, 1);
+                if (messages != null)
                 {
-                    var userInChat = await API.Users.GetUserInfo(message.userId);
-                    listBox1.Items.Add(userInChat.name + " > " + message.text + " | " + message.date.ToShortTimeString());
-                    ListViewMes.Items.Add(userInChat.name + Environment.NewLine + message.text + Environment.NewLine  + message.date.ToShortTimeString());
-                    listOfMessageId.Items.Add(message.id);
+                    foreach (var message in messages.Reverse())
+                    {
+                        var userInChat = await API.Users.GetUserInfo(message.userId);
+                        listBox1.Items.Add(userInChat.name + " > " + message.text + " | " + message.date.ToShortTimeString());
+                        ListViewMes.Items.Add(userInChat.name + Environment.NewLine + message.text + Environment.NewLine + message.date.ToShortTimeString());
+                        listOfMessageId.Items.Add(message.id);
+                    }
                 }
                 currentChat = chats[listBox.SelectedIndex];
             }
@@ -429,9 +437,12 @@ namespace Messenger
             {
                 filename = dlg.FileName;
             }
-            var fileId = await API.Files.UploadFile(filename);
-            long fileIds = Convert.ToInt32(fileId);
-            PictureIds.Items.Add(fileIds);
+            if (!String.IsNullOrWhiteSpace(filename))
+            {
+                var fileId = await API.Files.UploadFile(filename);
+                long fileIds = Convert.ToInt32(fileId);
+                PictureIds.Items.Add(fileIds);
+            }
         }
 
         private void CreatePublic_Click(object sender, RoutedEventArgs e)
