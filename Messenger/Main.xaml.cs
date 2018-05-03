@@ -39,19 +39,27 @@ namespace Messenger
             this.user = user;
             this.account = account;
             textBlock.Text = user.name;
-            API.Connection.Connect(account.accessToken, e => Dispatcher.Invoke(() =>
+            API.Connection.Connect(account.accessToken, e => Dispatcher.Invoke(async () =>
             {
-                if (currentChat != null && currentChat.id == e.chatId)
+                Console.WriteLine("Getted message");
+                var message = await API.Messages.GetMessage(account.accessToken, e);
+                if (currentChat != null && currentChat.id == message.chatId)
                 {
-                    //var usersss = API.Users.GetUserInfo(e.userId).Wait();
+                    Console.WriteLine("In current chat");
+                    var us = await API.Users.GetUserInfo(message.userId);
                     //Task.Run(async () => {var userss = await API.Users.GetUserInfo(e.userId); });
                     //var userss = API.Users.GetUserInfo(e.userId).GetAwaiter().ToString();
-                    ListViewMes.Items.Add(API.Users.GetUserInfo(e.userId).Result.name + " > " + e.text + " | " + e.date.ToShortTimeString());
+                    //ListViewMes.Items.Insert(0, $"{(await API.Users.GetUserInfo(message.userId)).name} > {message.text} | {message.date.ToShortTimeString()}");
+                    listBox1.Items.Add(us.name + " > " + message.text + " | " + message.date.ToShortTimeString());
+                    ListViewMes.Items.Add(us.name + Environment.NewLine + message.text + Environment.NewLine + message.date.ToShortTimeString());
+                    listOfMessageId.Items.Add(message.id);
+                    Console.WriteLine("Message added");
                 }
-            }), e => Dispatcher.Invoke(() => 
+            }), e => Dispatcher.Invoke(async () => 
             {
-                chats.Add(e);
-                listBox.Items.Add(e.id);
+                var chating = await API.Chats.GetChatInfo(account.accessToken, e);
+                chats.Add(chating);
+                listBox.Items.Add(chating.id);
             }));
             var img = new BitmapImage();
             img.BeginInit();
@@ -85,8 +93,8 @@ namespace Messenger
             long[] userChats = await API.Users.GetChats(account.accessToken);
             foreach (var i in userChats)
             {
-                chats.Add(await API.Chats.GetChatInfo(account.accessToken, i));
                 var chating = await API.Chats.GetChatInfo(account.accessToken, i);
+                chats.Add(chating);
                 listBox.Items.Add(chating.id);
             }
         }
@@ -141,17 +149,16 @@ namespace Messenger
         {
             listBox2.Items.Clear();
             users.Clear();
-            if(textBox3.Text != "")
+            var userIds = await API.Users.FindUsersByName(textBox3.Text, 10);
+            if (userIds != null)
             {
-                foreach (var user in await API.Users.FindUsersByName(textBox3.Text, 10))
+                foreach (var user in userIds)
                 {
                     users.Add(await API.Users.GetUserInfo(user));
                     var userSearched = await API.Users.GetUserInfo(user);
                     listBox2.Items.Add(userSearched.name);
                 }
             }
-            
-
         }
 
         //Open user information in search
@@ -191,12 +198,12 @@ namespace Messenger
         }
 
 
-        //~Main()
-        //{
-        //    API.Connection.Disconnect();
-        //}
+        ~Main()
+        {
+            API.Connection.Disconnect();
+        }
 
-            //Close search
+        //Close search
         private void image_MouseDown(object sender, MouseButtonEventArgs e)
         {
             listBox2.Items.Clear();
@@ -359,7 +366,6 @@ namespace Messenger
             // Check if we have pressed enter
             if (e.Key == Key.Enter)
             {
-                Console.WriteLine("asdsad");
                 // If we have control pressed...
                 if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
                 {
