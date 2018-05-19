@@ -47,7 +47,7 @@
             <ListBox x:Name="listBox4" HorizontalAlignment="Left" Height="455" Margin="1,79,0,0" VerticalAlignment="Top" Width="222" Background="#7F342626" Grid.Column="1"/>
             <Button x:Name="FilesButton" Content="" HorizontalAlignment="Left" Margin="244,534,0,0" VerticalAlignment="Top" Width="94" Height="91" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Grid.RowSpan="2" Click="FilesButton_Click"/>
 
-            <ListView x:Name="ListViewMes" ScrollViewer.IsDeferredScrollingEnabled="True" HorizontalContentAlignment="Stretch" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="620" Foreground="White" Background="#FF3E2626" ScrollViewer.HorizontalScrollBarVisibility="Disabled" RenderTransformOrigin="0.5,0.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.ColumnSpan="2" ItemTemplateSelector="{StaticResource messageTemplateSelector}" ScrollViewer.CanContentScroll="False">
+            <ListView x:Name="ListViewMes" ScrollViewer.IsDeferredScrollingEnabled="True" HorizontalContentAlignment="Stretch" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="620" Foreground="White" Background="#FF3E2626" ScrollViewer.HorizontalScrollBarVisibility="Disabled" RenderTransformOrigin="0.5,0.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.ColumnSpan="2" ItemTemplateSelector="{StaticResource messageTemplateSelector}" ScrollViewer.CanContentScroll="True">
                 <!--<ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
