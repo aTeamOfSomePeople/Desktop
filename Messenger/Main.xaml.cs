@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Media.Effects;
 using Microsoft.Win32;
+using System.Collections.ObjectModel;
 
 namespace Messenger
 {
@@ -22,38 +23,29 @@ namespace Messenger
     /// </summary>
     public partial class Main : Window
     {
-        private API.Users.User user { get; set; }
-        private API.Accounts.Account account { get; set; }
-        private API.Chats.Chat currentChat { get; set; }
+        private API.Users user { get; set; }
+        private API.Accounts account { get; set; }
+        private API.Chats currentChat { get; set; }
         //private List<ZeroAPI.Chat> chats = new List<ZeroAPI.Chat>();
-        private List<API.Chats.Chat> chats = new List<API.Chats.Chat>();
-        private List<API.Users.User> users = new List<API.Users.User>();
-        //private List<ZeroAPI.User> users = new List<ZeroAPI.User>();
+        private List<API.Chats> chats = new List<API.Chats>();
+        private List<API.Users> users = new List<API.Users>();
+        private ObservableCollection<API.Messages> messages = new ObservableCollection<API.Messages>();
         public int lol = 1;
-        private bool editing = false;
 
-        public Main(API.Accounts.Account account, API.Users.User user)
+        public Main(API.Accounts account, API.Users user)
         {
             InitializeComponent();
             currentChat = null;
             this.user = user;
             this.account = account;
             textBlock.Text = user.name;
+            ListViewMes.ItemsSource = messages;
             API.Connection.Connect(account.accessToken, e => Dispatcher.Invoke(async () =>
             {
-                Console.WriteLine("Getted message");
                 var message = await API.Messages.GetMessage(account.accessToken, e);
                 if (currentChat != null && currentChat.id == message.chatId)
                 {
-                    Console.WriteLine("In current chat");
-                    var us = await API.Users.GetUserInfo(message.userId);
-                    //Task.Run(async () => {var userss = await API.Users.GetUserInfo(e.userId); });
-                    //var userss = API.Users.GetUserInfo(e.userId).GetAwaiter().ToString();
-                    //ListViewMes.Items.Insert(0, $"{(await API.Users.GetUserInfo(message.userId)).name} > {message.text} | {message.date.ToShortTimeString()}");
-                    listBox1.Items.Add(us.name + " > " + message.text + " | " + message.date.ToShortTimeString());
-                    ListViewMes.Items.Add(us.name + Environment.NewLine + message.text + Environment.NewLine + message.date.ToShortTimeString());
-                    listOfMessageId.Items.Add(message.id);
-                    Console.WriteLine("Message added");
+                    messages.Add(message);
                 }
             }), e => Dispatcher.Invoke(async () => 
             {
@@ -61,15 +53,10 @@ namespace Messenger
                 chats.Add(chating);
                 listBox.Items.Add(chating.id);
             }));
-            var img = new BitmapImage();
-            img.BeginInit();
-            try
+            if (user.avatar != null)
             {
-                img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
-                img.EndInit();
-                image1.Source = img;
+                image1.Source = new BitmapImage(new Uri(user.avatar));
             }
-            catch { }
         }
         
         private void createChat_Click(object sender, RoutedEventArgs e)
@@ -104,18 +91,13 @@ namespace Messenger
         {
             if (listBox.SelectedItem != null)
             {
-                listBox1.Items.Clear();
-                ListViewMes.Items.Clear();
-                listOfMessageId.Items.Clear();
-                var messages = await API.Messages.GetMessages(account.accessToken, chats[listBox.SelectedIndex].id, 50, 1);
-                if (messages != null)
+                messages.Clear();
+                var message = await API.Messages.GetMessages(account.accessToken, chats[listBox.SelectedIndex].id, 50, 1);
+                if (message != null)
                 {
-                    foreach (var message in messages.Reverse())
+                    foreach (var el in message.Reverse())
                     {
-                        var userInChat = await API.Users.GetUserInfo(message.userId);
-                        listBox1.Items.Add(userInChat.name + " > " + message.text + " | " + message.date.ToShortTimeString());
-                        ListViewMes.Items.Add(userInChat.name + Environment.NewLine + message.text + Environment.NewLine + message.date.ToShortTimeString());
-                        listOfMessageId.Items.Add(message.id);
+                        messages.Add(el);
                     }
                 }
                 currentChat = chats[listBox.SelectedIndex];
@@ -169,19 +151,10 @@ namespace Messenger
                 UserInformations.Visibility = Visibility.Visible;
                 searchUsers.Visibility = Visibility.Hidden;
                 NameOfSearchUser.Text = users[listBox2.SelectedIndex].name;
-
-                var img = new BitmapImage();
-                img.BeginInit();
-                try
+                if (user.avatar != null)
                 {
-                    img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
-                    img.EndInit();
-                    image1.Source = img;
+                    image1.Source = new BitmapImage(new Uri(user.avatar));
                 }
-                catch { }
-
-
-
                 //    listBox3.Items.Add(users[listBox2.SelectedIndex].Id);
             }
         }
@@ -236,15 +209,10 @@ namespace Messenger
             MainGrid.Effect = blurEffect;
             MainGrid.IsHitTestVisible = false;
             nameSetting.Text = user.name;
-            var img = new BitmapImage();
-            img.BeginInit();
-            try
+            if (user.avatar != null)
             {
-                img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
-                img.EndInit();
-                avatarSetting.Source = img;
+                avatarSetting.Source = new BitmapImage(new Uri(user.avatar));
             }
-            catch { }
             bioSetting.Text = user.description;
         }
 
@@ -304,16 +272,10 @@ namespace Messenger
             await API.Users.ChangeAvatar(account.accessToken, fileIds);
             user = await API.Users.GetUserInfo(user.id);
 
-            var img = new BitmapImage();
-            img.BeginInit();
-            try
+            if (user.avatar != null)
             {
-                img.StreamSource = new System.IO.MemoryStream(API.Users.GetFileAsBytes(user.avatar));
-                img.EndInit();
-                image1.Source = img;
-
+                image1.Source = new BitmapImage(new Uri(user.avatar));
             }
-            catch { }
         }
 
         //Close settings
@@ -447,7 +409,10 @@ namespace Messenger
             {
                 var fileId = await API.Files.UploadFile(filename);
                 long fileIds = Convert.ToInt32(fileId);
-                PictureIds.Items.Add(fileIds);
+                for (var i = 0; i < 20; i++)
+                {
+                    PictureIds.Items.Add(fileIds);
+                }
             }
         }
 
@@ -470,13 +435,17 @@ namespace Messenger
         //Removing messages from you
         private async void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
-            await API.Messages.DeleteMessage(account.accessToken, Convert.ToUInt32(listOfMessageId.Items[ListViewMes.SelectedIndex]),false);
+            var message = (API.Messages)((StackPanel)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).GetBindingExpression(StackPanel.NameProperty).ResolvedSource;
+            await API.Messages.DeleteMessage(account.accessToken, message.id,false);
+            messages.Remove(message);
         }
 
         //Removing messages from all
         private async void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
-            await API.Messages.DeleteMessage(account.accessToken, Convert.ToUInt32(listOfMessageId.Items[ListViewMes.SelectedIndex]), true);
+            var message = (API.Messages)((StackPanel)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).GetBindingExpression(StackPanel.NameProperty).ResolvedSource;
+            await API.Messages.DeleteMessage(account.accessToken, message.id, true);
+            messages.Remove(message);
         }
     }
 }

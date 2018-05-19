@@ -40,10 +40,10 @@ namespace Messenger
         {
             try
             {
-                API.Accounts.Account account = await API.Accounts.Auth(login.Text, password.Password);
+                API.Accounts account = await API.Accounts.Auth(login.Text, password.Password);
                 if (account != null)
                 {
-                    API.Users.User user = await API.Users.GetUserInfo(account.userId);
+                    API.Users user = await API.Users.GetUserInfo(account.userId);
                     Window main = new Main(account, user);
                     this.Close();
                     main.Show();
@@ -71,10 +71,10 @@ namespace Messenger
             char[] separators = { '=', '&' };
             string[] responseContent = url.Split(separators);
             string accessToken = responseContent[1];
-            API.Accounts.Account account = await API.Accounts.OAuth(accessToken, API.Service.Vk);
+            API.Accounts account = await API.Accounts.OAuth(accessToken, API.Service.Vk);
             if (account != null)
             {
-                API.Users.User user = await API.Users.GetUserInfo(account.userId);
+                API.Users user = await API.Users.GetUserInfo(account.userId);
                 Window main = new Main(account, user);
                 this.Close();
                 main.Show();
@@ -97,10 +97,10 @@ namespace Messenger
             GooglePlusAccessToken googleToken = new GooglePlusAccessToken();
             googleToken = googleToken.GetToken(code, client_id, client_secret, redirect_url);
 
-            API.Accounts.Account account = await API.Accounts.OAuth(googleToken.access_token, API.Service.Google);
+            API.Accounts account = await API.Accounts.OAuth(googleToken.access_token, API.Service.Google);
             if (account != null)
             {
-                API.Users.User user = await API.Users.GetUserInfo(account.userId);
+                API.Users user = await API.Users.GetUserInfo(account.userId);
                 Window main = new Main(account, user);
                 this.Close();
                 main.Show();
@@ -117,10 +117,10 @@ namespace Messenger
             string[] responseContent = url.Split(separators);
             string accessToken = responseContent[5] + "." + responseContent[6];
 
-            API.Accounts.Account account = await API.Accounts.OAuth(accessToken, API.Service.Instagram);
+            API.Accounts account = await API.Accounts.OAuth(accessToken, API.Service.Instagram);
             if (account != null)
             {
-                API.Users.User user = await API.Users.GetUserInfo(account.userId);
+                API.Users user = await API.Users.GetUserInfo(account.userId);
                 Window main = new Main(account, user);
                 this.Close();
                 main.Show();

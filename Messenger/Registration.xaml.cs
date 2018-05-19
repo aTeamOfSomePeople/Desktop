@@ -30,11 +30,11 @@ namespace Messenger
             {
                 await API.Accounts.Register(login.Text, password.Password, name.Text);
                 //ZeroAPI.User.Register(name.Text, login.Text, password.Text);
-                API.Accounts.Account account = await API.Accounts.Auth(login.Text, password.Password);
+                API.Accounts account = await API.Accounts.Auth(login.Text, password.Password);
                 //var user = ZeroAPI.User.Authorization(login.Text, password.Text);
                 if (account != null)
                 {
-                    API.Users.User user = await API.Users.GetUserInfo(account.userId);
+                    API.Users user = await API.Users.GetUserInfo(account.userId);
                     Window main = new Main(account, user);
                     this.Close();
                     main.Show();

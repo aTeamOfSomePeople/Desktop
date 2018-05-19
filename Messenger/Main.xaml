@@ -1,11 +1,19 @@
 ﻿<Window x:Class="Messenger.Main"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Messenger"
         mc:Ignorable="d"
         Title="Main" Height="654" Width="1088" MinWidth="1140" MaxWidth="1140" MinHeight="680" MaxHeight="980">
+    <Window.Resources>
+        <local:MessagesTemplateSelector x:Key="messageTemplateSelector"/>
+        <ContextMenu x:Key="messageContextMenu">
+            <MenuItem Header="Редактировать сообщение" Click="MenuItem_Click"/>
+            <MenuItem Header="Удалить сообщение у себя" Click="MenuItem_Click_1"/>
+            <MenuItem Header="Удалить сообщение для всех" Click="MenuItem_Click_2"/>
+        </ContextMenu>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="254*"/>
@@ -39,22 +47,17 @@
             <ListBox x:Name="listBox4" HorizontalAlignment="Left" Height="455" Margin="1,79,0,0" VerticalAlignment="Top" Width="222" Background="#7F342626" Grid.Column="1"/>
             <Button x:Name="FilesButton" Content="" HorizontalAlignment="Left" Margin="244,534,0,0" VerticalAlignment="Top" Width="94" Height="91" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Grid.RowSpan="2" Click="FilesButton_Click"/>
 
-            <ListView x:Name="ListViewMes" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="620" Foreground="White" Background="#FF3E2626" ScrollViewer.HorizontalScrollBarVisibility="Disabled" RenderTransformOrigin="0.5,0.5" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.ColumnSpan="2">
-                <ListView.ItemTemplate>
+            <ListView x:Name="ListViewMes" ScrollViewer.IsDeferredScrollingEnabled="True" HorizontalContentAlignment="Stretch" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="620" Foreground="White" Background="#FF3E2626" ScrollViewer.HorizontalScrollBarVisibility="Disabled" RenderTransformOrigin="0.5,0.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.ColumnSpan="2" ItemTemplateSelector="{StaticResource messageTemplateSelector}" ScrollViewer.CanContentScroll="False">
+                <!--<ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding .}" TextWrapping="Wrap" TextAlignment="Justify"/>
+                        <StackPanel>
+                            <TextBlock Text="{Binding userId}"/>
+                            <TextBlock Text="{Binding text}" TextWrapping="Wrap" TextAlignment="Justify"/>
+                            <TextBlock Text="{Binding date}" />
+                        </StackPanel>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem  Header="Редактировать сообщение" Click="MenuItem_Click"/>
-                        <MenuItem Header="Удалить сообщение у себя" Click="MenuItem_Click_1"/>
-                        <MenuItem Header="Удалить сообщение для всех" Click="MenuItem_Click_2"/>
-                        <MenuItem Header="Удалить сообщение у собеседника?????"/>
-                    </ContextMenu>
-                </ListView.ContextMenu>
+                </ListView.ItemTemplate>-->
             </ListView>
-
         </Grid>
 
         <Grid Name="searchUsers" HorizontalAlignment="Center" Height="458" VerticalAlignment="Center" Width="806" Margin="0" Background="#FF3C2626" Visibility="Hidden" Grid.ColumnSpan="3">
