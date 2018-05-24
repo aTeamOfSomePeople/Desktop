@@ -33,6 +33,7 @@
         </Image>
         <Image x:Name="image2" HorizontalAlignment="Left" Height="33" Margin="212,314,0,0" VerticalAlignment="Top" Width="33" Source="images/Instagram.png" MouseDown="image2_MouseDown">
         </Image>
+        <Image x:Name="image3" HorizontalAlignment="Left" Height="45" Margin="339,10,0,0" VerticalAlignment="Top" Width="45" MouseDown="image3_MouseDown" Source="images/shesterenka.png"/>
 
     </Grid>
 </Window>

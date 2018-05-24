@@ -30,7 +30,7 @@ namespace Messenger
         private List<API.Chats> chats = new List<API.Chats>();
         private List<API.Users> users = new List<API.Users>();
         private ObservableCollection<API.Messages> messages = new ObservableCollection<API.Messages>();
-        public int lol = 1;
+        private List<long> pictureIds = new List<long>();
 
         public Main(API.Accounts account, API.Users user)
         {
@@ -40,11 +40,13 @@ namespace Messenger
             this.account = account;
             textBlock.Text = user.name;
             ListViewMes.ItemsSource = messages;
+            messages.CollectionChanged += Messages_CollectionChanged;
             API.Connection.Connect(account.accessToken, e => Dispatcher.Invoke(async () =>
             {
                 var message = await API.Messages.GetMessage(account.accessToken, e);
                 if (currentChat != null && currentChat.id == message.chatId)
                 {
+                    message.date.ToLocalTime();
                     messages.Add(message);
                 }
             }), e => Dispatcher.Invoke(async () => 
@@ -58,7 +60,16 @@ namespace Messenger
                 image1.Source = new BitmapImage(new Uri(user.avatar));
             }
         }
-        
+
+        private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            var scrollView = FindScrollViewer(ListViewMes);
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && scrollView.ScrollableHeight == scrollView.ContentVerticalOffset)
+            {
+                ListViewMes.ScrollIntoView(messages.Last());
+            }
+        }
+
         private void createChat_Click(object sender, RoutedEventArgs e)
         {
             //var users = new HashSet<ZeroAPI.User>();
@@ -95,11 +106,13 @@ namespace Messenger
                 var message = await API.Messages.GetMessages(account.accessToken, chats[listBox.SelectedIndex].id, 50, 1);
                 if (message != null)
                 {
-                    foreach (var el in message.Reverse())
+                    foreach (var el in message)
                     {
+                        Console.WriteLine(el.date.ToLocalTime());
                         messages.Add(el);
                     }
                 }
+                ListViewMes.ScrollIntoView(message.Last());
                 currentChat = chats[listBox.SelectedIndex];
             }
         }
@@ -110,9 +123,9 @@ namespace Messenger
             try
             {
                 string fileIds = "";
-                foreach(var i in PictureIds.Items)
+                foreach(var i in pictureIds)
                 {
-                    fileIds += i +",";
+                    fileIds += i + ",";
                 }
                 if(fileIds != "")
                 {
@@ -120,7 +133,7 @@ namespace Messenger
                 }
                 await API.Messages.SendMessage(account.accessToken, currentChat.id, textBox2.Text,fileIds);
                 textBox2.Clear();
-                PictureIds.Items.Clear();
+                pictureIds.Clear();
             }
             catch { }
             
@@ -348,7 +361,7 @@ namespace Messenger
                     try
                     {
                         string fileIds = "";
-                        foreach (var i in PictureIds.Items)
+                        foreach (var i in pictureIds)
                         {
                             fileIds += i + ",";
                         }
@@ -358,7 +371,7 @@ namespace Messenger
                         }
                         await API.Messages.SendMessage(account.accessToken, currentChat.id, textBox2.Text, fileIds);
                         textBox2.Clear();
-                        PictureIds.Items.Clear();
+                        pictureIds.Clear();
                     }
                     catch { }
 
@@ -408,10 +421,14 @@ namespace Messenger
             if (!String.IsNullOrWhiteSpace(filename))
             {
                 var fileId = await API.Files.UploadFile(filename);
-                long fileIds = Convert.ToInt32(fileId);
-                for (var i = 0; i < 20; i++)
+                if (fileId.HasValue)
                 {
-                    PictureIds.Items.Add(fileIds);
+                    MessageBox.Show("Изображение добавлено");
+                    pictureIds.Add(fileId.Value);
+                }
+                else
+                {
+                    MessageBox.Show("Не удалось загрузить изображение");
                 }
             }
         }
@@ -436,16 +453,33 @@ namespace Messenger
         private async void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
             var message = (API.Messages)((StackPanel)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).GetBindingExpression(StackPanel.NameProperty).ResolvedSource;
-            await API.Messages.DeleteMessage(account.accessToken, message.id,false);
-            messages.Remove(message);
+            if (await API.Messages.DeleteMessage(account.accessToken, message.id, false))
+            {
+                messages.Remove(message);
+            }
         }
 
         //Removing messages from all
         private async void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
             var message = (API.Messages)((StackPanel)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).GetBindingExpression(StackPanel.NameProperty).ResolvedSource;
-            await API.Messages.DeleteMessage(account.accessToken, message.id, true);
-            messages.Remove(message);
+            if (await API.Messages.DeleteMessage(account.accessToken, message.id, true))
+            {
+                messages.Remove(message);
+            }
+        }
+
+        private ScrollViewer FindScrollViewer(DependencyObject d)
+        {
+            if (d is ScrollViewer)
+                return d as ScrollViewer;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(d); i++)
+            {
+                var sw = FindScrollViewer(VisualTreeHelper.GetChild(d, i));
+                if (sw != null) return sw;
+            }
+            return null;
         }
     }
 }

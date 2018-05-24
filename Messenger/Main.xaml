@@ -47,7 +47,12 @@
             <ListBox x:Name="listBox4" HorizontalAlignment="Left" Height="455" Margin="1,79,0,0" VerticalAlignment="Top" Width="222" Background="#7F342626" Grid.Column="1"/>
             <Button x:Name="FilesButton" Content="" HorizontalAlignment="Left" Margin="244,534,0,0" VerticalAlignment="Top" Width="94" Height="91" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Grid.RowSpan="2" Click="FilesButton_Click"/>
 
-            <ListView x:Name="ListViewMes" ScrollViewer.IsDeferredScrollingEnabled="True" HorizontalContentAlignment="Stretch" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="620" Foreground="White" Background="#FF3E2626" ScrollViewer.HorizontalScrollBarVisibility="Disabled" RenderTransformOrigin="0.5,0.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.ColumnSpan="2" ItemTemplateSelector="{StaticResource messageTemplateSelector}" ScrollViewer.CanContentScroll="True">
+            <ListView x:Name="ListViewMes" ScrollViewer.IsDeferredScrollingEnabled="True" HorizontalContentAlignment="Stretch" HorizontalAlignment="Left" Height="455" Margin="244,79,0,0" VerticalAlignment="Top" Width="620" Foreground="White" Background="#FF3E2626" ScrollViewer.HorizontalScrollBarVisibility="Disabled" RenderTransformOrigin="0.5,0.5" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.ColumnSpan="2" ItemTemplateSelector="{StaticResource messageTemplateSelector}" ScrollViewer.CanContentScroll="True" VirtualizingPanel.ScrollUnit="Pixel" >
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel VerticalAlignment="Bottom"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
                 <!--<ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
@@ -148,12 +153,6 @@
 
             </Grid>
         </ScrollViewer>
-        <RichTextBox x:Name="RichBox" Grid.Column="2" HorizontalAlignment="Left" Height="100" Margin="0,630,0,0" VerticalAlignment="Top" Width="155" Background="#FF704343" Foreground="White">
-
-        </RichTextBox>
-        <ListBox x:Name="listBox1" HorizontalAlignment="Left" Height="226" Margin="351,678,0,-255" VerticalAlignment="Top" Width="308" Background="#7F342626" Foreground="White" BorderThickness="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <ListBox x:Name="PictureIds" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="96" Margin="24,654,0,-101" VerticalAlignment="Top" Width="280"/>
-        <ListBox x:Name="listOfMessageId" Grid.Column="1" HorizontalAlignment="Left" Height="95" Margin="55,655,0,-101" VerticalAlignment="Top" Width="274"/>
 
 
 

@@ -157,5 +157,10 @@ namespace Messenger
                 return serStatus;
             }
         }
+
+        private void image3_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            new Proxy().ShowDialog();
+        }
     }
 }
