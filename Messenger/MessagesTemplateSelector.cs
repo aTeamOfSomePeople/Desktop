@@ -31,7 +31,9 @@ namespace Messenger
                 var attachmentsStackPanel = new FrameworkElementFactory(typeof(WrapPanel));
                 var date = new FrameworkElementFactory(typeof(TextBlock));
 
-                userName.SetBinding(TextBlock.TextProperty, new Binding("userId"));
+                var name = new Binding("userId");
+                name.Converter = new IdToNameConverter();
+                userName.SetBinding(TextBlock.TextProperty, name);
                 text.SetBinding(TextBlock.TextProperty, new Binding("text"));
                 attachmentsStackPanel.SetValue(WrapPanel.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
                 attachmentsStackPanel.SetValue(StackPanel.BackgroundProperty, Brushes.Transparent);

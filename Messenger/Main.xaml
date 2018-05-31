@@ -35,7 +35,7 @@
                 <ColumnDefinition Width="863*"/>
                 <ColumnDefinition Width="250*"/>
             </Grid.ColumnDefinitions>
-            <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="476" Margin="22,149,0,0" VerticalAlignment="Top" Width="222" Loaded="listBox_Loaded" MouseUp="listBox_MouseDoubleClick" Background="#7F342626" Foreground="White" Grid.RowSpan="2"/>
+            <ListBox x:Name="listBox" DisplayMemberPath="name" HorizontalAlignment="Left" Height="476" Margin="22,149,0,0" VerticalAlignment="Top" Width="222" Loaded="listBox_Loaded" MouseUp="listBox_MouseDoubleClick" Background="#7F342626" Foreground="White" Grid.RowSpan="2"/>
             <Button x:Name="button" Content="Отправить сообщение" HorizontalAlignment="Left" Margin="1,534,0,0" VerticalAlignment="Top" Width="222" Height="91" Click="button_Click" Background="#FF785B5B" FontSize="18" FontFamily="MS Reference Sans Serif" Foreground="White" Grid.RowSpan="2" Grid.Column="1"/>
             <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="91" Margin="338,534,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="526" SpellCheck.IsEnabled="True" Background="#338D8699" Foreground="White" Grid.RowSpan="2" Grid.ColumnSpan="2" PreviewKeyDown="textBox2_PreviewKeyDown" />
             <Grid HorizontalAlignment="Left" Height="46" Margin="22,10,0,0" VerticalAlignment="Top" Width="1083" d:IsHidden="False" Grid.ColumnSpan="2">
@@ -53,15 +53,6 @@
                         <VirtualizingStackPanel VerticalAlignment="Bottom"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
-                <!--<ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding userId}"/>
-                            <TextBlock Text="{Binding text}" TextWrapping="Wrap" TextAlignment="Justify"/>
-                            <TextBlock Text="{Binding date}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>-->
             </ListView>
         </Grid>
 

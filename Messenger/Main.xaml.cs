@@ -27,7 +27,7 @@ namespace Messenger
         private API.Accounts account { get; set; }
         private API.Chats currentChat { get; set; }
         //private List<ZeroAPI.Chat> chats = new List<ZeroAPI.Chat>();
-        private List<API.Chats> chats = new List<API.Chats>();
+        private ObservableCollection<API.Chats> chats = new ObservableCollection<API.Chats>();
         private List<API.Users> users = new List<API.Users>();
         private ObservableCollection<API.Messages> messages = new ObservableCollection<API.Messages>();
         private List<long> pictureIds = new List<long>();
@@ -40,20 +40,18 @@ namespace Messenger
             this.account = account;
             textBlock.Text = user.name;
             ListViewMes.ItemsSource = messages;
+            listBox.ItemsSource = chats;
             messages.CollectionChanged += Messages_CollectionChanged;
             API.Connection.Connect(account.accessToken, e => Dispatcher.Invoke(async () =>
             {
                 var message = await API.Messages.GetMessage(account.accessToken, e);
                 if (currentChat != null && currentChat.id == message.chatId)
                 {
-                    message.date.ToLocalTime();
                     messages.Add(message);
                 }
             }), e => Dispatcher.Invoke(async () => 
             {
-                var chating = await API.Chats.GetChatInfo(account.accessToken, e);
-                chats.Add(chating);
-                listBox.Items.Add(chating.id);
+                chats.Add(await API.Chats.GetChatInfo(account.accessToken, e));
             }));
             if (user.avatar != null)
             {
@@ -88,12 +86,9 @@ namespace Messenger
         //loading chats
         private async void listBox_Loaded(object sender, RoutedEventArgs e)
         {
-            long[] userChats = await API.Users.GetChats(account.accessToken);
-            foreach (var i in userChats)
+            foreach (var i in await API.Users.GetChats(account.accessToken))
             {
-                var chating = await API.Chats.GetChatInfo(account.accessToken, i);
-                chats.Add(chating);
-                listBox.Items.Add(chating.id);
+                chats.Add(await API.Chats.GetChatInfo(account.accessToken, i));
             }
         }
 
